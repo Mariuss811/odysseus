@@ -1990,7 +1990,7 @@ async def action_check_email_urgency(owner: str, **kwargs) -> Tuple[str, bool]:
             if _re.search(r"\b(urgent|immediately|final notice|locked out|waiting outside|can't get in|cannot get in)\b", blob):
                 score = 3
                 reason = "urgent wording"
-            if (bulkish or marketingish) and score < 2:
+            if bulkish or marketingish:
                 score = 0
                 reason = "bulk marketing/newsletter"
 
@@ -2006,6 +2006,7 @@ async def action_check_email_urgency(owner: str, **kwargs) -> Tuple[str, bool]:
                 "reason": reason,
                 "subject": (item.get("subject") or "")[:200],
                 "from": _from_short[:120],
+                "body": (item.get("body") or "")[:600],
                 "triage_version": TRIAGE_VERSION,
                 "message_id": (item.get("message_id") or "").strip(),
                 "unread": bool(item.get("unread")),
@@ -2405,6 +2406,7 @@ async def action_check_email_urgency(owner: str, **kwargs) -> Tuple[str, bool]:
                 subj = (v.get("subject") or "(no subject)")[:160]
                 frm = v.get("from") or ""
                 why = v.get("reason") or ""
+                body_snippet = (v.get("body") or "").strip()
                 uid_for_link = str(k).split(":", 1)[-1]
                 hash_link = f"#email={_quote('INBOX', safe='')}:{uid_for_link}"
                 open_link = f"{_pub}/{hash_link}" if _pub else hash_link
@@ -2413,6 +2415,11 @@ async def action_check_email_urgency(owner: str, **kwargs) -> Tuple[str, bool]:
                     line += f"  —  {frm}"
                 if why:
                     line += f"  ·  {why}"
+                if body_snippet:
+                    clean_snippet = " ".join(body_snippet.split())
+                    if len(clean_snippet) > 200:
+                        clean_snippet = clean_snippet[:200] + "..."
+                    line += f"\n   Content: {clean_snippet}"
                 lines.append(line)
                 lines.append(f"   Open email: {open_link}")
             if total_urgent > len(sorted_urgent):
