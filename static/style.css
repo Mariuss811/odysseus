@@ -16362,7 +16362,7 @@ body.left-dock-active {
 body.left-dock-active:not(.email-doc-split-active) .chat-container {
   margin-left: var(--left-dock-w, 0px);
 }
-body.right-dock-active .chat-container,
+body.right-dock-active:not(.doc-view) .chat-container,
 body.right-dock-active:not(.email-doc-split-active) .doc-editor-pane {
   margin-right: var(--right-dock-w, 0px);
 }
