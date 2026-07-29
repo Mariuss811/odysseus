@@ -24,7 +24,7 @@ import censorModule from './js/censor.js';
 import galleryModule from './js/gallery.js';
 import tasksModule from './js/tasks.js?v=20260723tasksbulkfeedback1';
 import calendarModule from './js/calendar.js';
-import notesModule from './js/notes.js';
+import notesModule from './js/notes.js?v=20260729pwa2';
 import adminModule from './js/admin.js?v=20260716openrouter3';
 import settingsModule from './js/settings.js?v=20260722emailfastindex1';
 // Eagerly bind unified minimize/restore behavior across all tool modals.
