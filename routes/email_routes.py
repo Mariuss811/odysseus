@@ -768,9 +768,13 @@ def _email_index_list(owner: str, account_id: str | None, folder: str, filter_: 
     """
     limit = max(1, min(int(limit or 50), 200))
     offset = max(0, int(offset or 0))
-    account_key = _account_cache_key(account_id, owner)
-    clauses = ["owner=?", "account_key=?", "folder=?"]
-    params: list = [owner or "", account_key, folder]
+    if account_id in ("all", "ALL", "", None):
+        clauses = ["owner=?", "folder=?"]
+        params: list = [owner or "", folder]
+    else:
+        account_key = _account_cache_key(account_id, owner)
+        clauses = ["owner=?", "account_key=?", "folder=?"]
+        params = [owner or "", account_key, folder]
     if filter_ == "unread":
         clauses.append("(flags IS NULL OR instr(flags, '\\Seen') = 0)")
     elif filter_ in {"unanswered", "undone"}:
@@ -840,9 +844,13 @@ def _email_index_search(owner: str, account_id: str | None, folder: str, query: 
     if not q:
         return [], 0, None
     limit = max(1, min(int(limit or 50), 200))
-    account_key = _account_cache_key(account_id, owner)
-    folder_clause = ""
-    params: list = [owner or "", account_key]
+    if account_id in ("all", "ALL", "", None):
+        account_clause = ""
+        params: list = [owner or ""]
+    else:
+        account_key = _account_cache_key(account_id, owner)
+        account_clause = "AND account_key=?"
+        params: list = [owner or "", account_key]
     # Searching from INBOX should feel global for Gmail-style accounts,
     # because users expect archived/labelled mail to show up too. The
     # local index only contains folders that have been warmed/listed, so
@@ -873,7 +881,7 @@ def _email_index_search(owner: str, account_id: str | None, folder: str, query: 
                 f"""
                 SELECT COUNT(*), MAX(updated_at)
                 FROM email_message_index
-                WHERE owner=? AND account_key=? {folder_clause}
+                WHERE owner=? {account_clause} {folder_clause}
                   AND {term_clause}
                 """,
                 params,
@@ -887,7 +895,7 @@ def _email_index_search(owner: str, account_id: str | None, folder: str, query: 
                        date_iso, date_display, date_epoch, size, flags, has_attachments,
                        folder
                 FROM email_message_index
-                WHERE owner=? AND account_key=? {folder_clause}
+                WHERE owner=? {account_clause} {folder_clause}
                   AND {term_clause}
                 ORDER BY date_epoch DESC
                 LIMIT ?

@@ -2652,6 +2652,7 @@ function _bindCardEvents(body) {
   body.querySelectorAll('.note-checkbox').forEach(el => {
     el.addEventListener('click', (e) => {
       if (_selectMode) return; // let card-level handler take over
+      if (e.target.closest('.note-checkbox-rm, .note-checkbox-agent, .note-checkbox-edit')) return;
       e.stopPropagation();
       const noteId = el.dataset.noteId;
       const idx = parseInt(el.dataset.idx);
@@ -2753,7 +2754,7 @@ function _bindCardEvents(body) {
     let startX = 0, startY = 0;
     const LONG_PRESS_MS = 350;
     const MOVE_THRESHOLD_PX = 8;
-    const _selectorSkip = '.note-checkbox, .note-card-x, .note-card-select, .note-card-pin, .note-card-action, .note-card-color-dot, .note-card-title, .note-card-edit, .note-card-edit-corner, .note-card-done, .note-card-corner-menu, .note-agent-tag, .note-card-label-chip, input, textarea, button, a';
+    const _selectorSkip = '.note-checklist-preview, .note-check-dot, .note-check-text, .note-checkbox, .note-card-x, .note-card-select, .note-card-pin, .note-card-action, .note-card-color-dot, .note-card-title, .note-card-edit, .note-card-edit-corner, .note-card-done, .note-card-corner-menu, .note-agent-tag, .note-card-label-chip, input, textarea, button, a';
 
     // Anchor for the finger-follow transform. Recomputed after every swap so
     // the card stays under the finger across reorderings.

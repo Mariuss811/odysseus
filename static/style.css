@@ -4647,6 +4647,8 @@ body.bg-pattern-sparkles {
         transition: transform 0.25s ease, opacity 0.25s ease !important;
         opacity: 1 !important;
         overflow: visible !important;
+        padding-top: env(safe-area-inset-top, 0px) !important;
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         /* Force opaque background — Firefox mobile renders the
            backdrop-filter+background combo as semi-transparent on
            the slide-out drawer, letting the chat input model picker
@@ -4697,14 +4699,14 @@ body.bg-pattern-sparkles {
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: auto;
         overflow-y: scroll !important;
-        padding-bottom: 40px;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       }
       .sidebar:not(.hidden) {
         overscroll-behavior: auto;
       }
       /* Sidebar header — room for hamburger */
       .sidebar-header {
-        padding: 18px 12px 8px 12px;
+        padding: calc(14px + env(safe-area-inset-top, 0px)) 12px 8px 12px !important;
         min-height: 44px;
       }
       .sidebar-brand-title {
@@ -33661,6 +33663,8 @@ body.notes-view .chat-container { flex: 1; min-width: 0; }
        and leaves a gap at the bottom of the viewport. Force full height here. */
     height: 100dvh !important;
     max-height: 100dvh !important;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 170;
     /* Bottom-sheet treatment like the document editor: stroked, rounded top,
        slides up from the bottom. */
@@ -33681,6 +33685,7 @@ body.notes-view .chat-container { flex: 1; min-width: 0; }
   body.notes-view .notes-pane-body {
     min-height: 0;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
   body.notes-view #notes-divider {
     display: none;
@@ -36422,6 +36427,8 @@ body.notes-mobile-mode.notes-drag-mode .note-card-pin.active {
   min-height: 18px;
   max-height: 240px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   overscroll-behavior: contain;
   /* Card has padding-right:30px reserved for the top-corner edit/done/pin
      buttons — but those sit above the checklist, not next to it. Pull the

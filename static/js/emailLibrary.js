@@ -2983,11 +2983,13 @@ function _renderAccountsStrip() {
   if (!strip) return;
   strip.style.display = 'flex';
   const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-  // The 'Default' chip caused desync bugs (changing the server-side
-  // default via the dot while still on the cached 'default' view would
-  // open the wrong account's emails). Each account renders as its own
-  // chip; the active one is selected explicitly via _loadAccounts.
   let html = '';
+  if (state._libAccounts && state._libAccounts.length > 0) {
+    const isAllActive = (!state._libAccountId || state._libAccountId === 'all') ? ' active' : '';
+    html += `<span class="gallery-chip-wrap" style="position:relative;display:inline-flex;align-items:center;">`
+         + `<button class="memory-toolbar-btn gallery-chip email-account-chip${isAllActive}" data-acc-id="all" title="All email accounts" style="padding: 0 12px;"><span class="email-account-chip-label">Alle</span></button>`
+         + `</span>`;
+  }
   // 6px dot — matches the sidebar notification-dot size.
   const _dotFilled = '<svg width="6" height="6" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>';
   const _dotHollow = '<svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/></svg>';
@@ -3011,7 +3013,8 @@ function _renderAccountsStrip() {
   strip.innerHTML = html;
   strip.querySelectorAll('button[data-acc-id]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      state._libAccountId = btn.dataset.accId || null;
+      const targetId = btn.dataset.accId;
+      state._libAccountId = targetId === 'all' ? 'all' : (targetId || null);
       _publishActiveAccount();
       _resetEmailListForFreshLoad({ useCache: false });
       _renderAccountsStrip();
